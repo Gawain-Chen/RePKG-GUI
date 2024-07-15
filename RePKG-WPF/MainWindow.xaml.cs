@@ -147,7 +147,7 @@ namespace RePKG_WPF
             Related_functions.CMD.RunCmd("explorer " + out_file + @"\");
         }
 
-        private void 主窗体_DragEnter(object sender, DragEventArgs e)
+        private void 主窗体_Drop(object sender, DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -166,15 +166,20 @@ namespace RePKG_WPF
                     }
                     else
                     {
-                        //日志.Text += $"\n[{DateTime.Now}]: 重复文件：{file}";
+                        日志.Text += $"\n[{DateTime.Now}]: 重复文件：{file}";
                     }
                 }
                 else
                 {
-                    //日志.Text += $"\n[{DateTime.Now}]: 无效文件：{file}";
+                    日志.Text += $"\n[{DateTime.Now}]: 无效文件：{file}";
                 }
             }
             文件下拉框.Header = "已选择" + Number_file.Count + "个对象";
+        }
+
+        private void 主窗体_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
         }
     }
 }
