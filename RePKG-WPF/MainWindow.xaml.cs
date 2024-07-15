@@ -129,12 +129,14 @@ namespace RePKG_WPF
                     日志.Text += str;
                 }));
             }
-
         }
         //完成后返回
         void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             日志.Text += "\n[" + DateTime.Now.ToString() + "]: 全部解压完毕！";
+            Number_file.Clear();
+            文件列表.Items.Clear();
+            文件下拉框.Header = $"已选择0个对象";
         }
 
         private void 打开目录__Click(object sender, RoutedEventArgs e)
@@ -174,7 +176,7 @@ namespace RePKG_WPF
                     日志.Text += $"\n[{DateTime.Now}]: 无效文件：{file}";
                 }
             }
-            文件下拉框.Header = "已选择" + Number_file.Count + "个对象";
+            文件下拉框.Header = $"已选择{Number_file.Count}个对象";
         }
 
         private void 主窗体_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
