@@ -2,21 +2,9 @@
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 
 namespace RePKG_WPF
@@ -51,7 +39,7 @@ namespace RePKG_WPF
             {
                 foreach (string file in ofd.FileNames)
                 {
-                    if(Number_file.Contains(file) == false)//排除同类项
+                    if (!Number_file.Contains(file))//排除同类项
                     {
                         Number_file.Add(file);//将元素添加到数组末尾
                         文件列表.Items.Add(file);
@@ -99,7 +87,7 @@ namespace RePKG_WPF
         //开始输出
         private void 开始_Click(object sender, RoutedEventArgs e)
         {
-            if(Number_file .Count == 0 )
+            if (Number_file.Count == 0)
             {
                 日志.Text += "\n[" + DateTime.Now.ToString() + "]: 您似乎木有选择要解压的PKG文件w(ﾟДﾟ)w";
             }
@@ -135,13 +123,13 @@ namespace RePKG_WPF
                     日志.Text += "\n[" + DateTime.Now.ToString() + "]: 输出路径：" + out_file + @"\" + System.IO.Path.GetFileNameWithoutExtension(Number_file[i].ToString());
                 }));
 
-                str = Related_functions.CMD.RunCmd(Temp_file + @"\RePKG.exe extract """ + Number_file[i] + @""" -o """ + out_file + @"\" + System.IO.Path.GetFileNameWithoutExtension(Number_file[i].ToString()))+@"""";
+                str = Related_functions.CMD.RunCmd(Temp_file + @"\RePKG.exe extract """ + Number_file[i] + @""" -o """ + out_file + @"\" + System.IO.Path.GetFileNameWithoutExtension(Number_file[i].ToString())) + @"""";
                 Dispatcher.Invoke(new Action(delegate
                 {
                     日志.Text += str;
                 }));
             }
-            
+
         }
         //完成后返回
         void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -157,6 +145,36 @@ namespace RePKG_WPF
                 Directory.CreateDirectory(out_file);//创建新路径
             }
             Related_functions.CMD.RunCmd("explorer " + out_file + @"\");
+        }
+
+        private void 主窗体_DragEnter(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                return;
+            }
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (var file in files)
+            {
+                if (file.ToLower().EndsWith(".pkg"))
+                {
+                    if (!Number_file.Contains(file))
+                    {
+                        Number_file.Add(file);//将元素添加到数组末尾
+                        文件列表.Items.Add(file);
+                        日志.Text += $"\n[{DateTime.Now}]: 已添加文件：{file}";
+                    }
+                    else
+                    {
+                        //日志.Text += $"\n[{DateTime.Now}]: 重复文件：{file}";
+                    }
+                }
+                else
+                {
+                    //日志.Text += $"\n[{DateTime.Now}]: 无效文件：{file}";
+                }
+            }
+            文件下拉框.Header = "已选择" + Number_file.Count + "个对象";
         }
     }
 }
